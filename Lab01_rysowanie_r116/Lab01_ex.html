@@ -7,9 +7,7 @@
     <style type="text/css">
       body {
         margin: 0;
-        /* background-color: #7ee8fa; */
-        /* background-image: linear-gradient(315deg, #7ee8fa 0%, #80ff72 74%); */
-        background-color: black;
+        background-image: linear-gradient(to top, #8a2387, #e94057, #f27121); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
         overflow: hidden;
       }
     </style>
@@ -22,11 +20,11 @@
     <script>
       var scene;
       var camera;
-      var treeGroup = new THREE.Group();
+      var treeComponents = [];
       var houseGroup = new THREE.Group();
       var carGroup = new THREE.Group();
-      var car;
-
+      var sunGroup = new THREE.Group();
+      
       initializeScene();
       animateScene();
       renderer.render(scene, camera);
@@ -48,18 +46,22 @@
         camera.position.set(0, 5, 20);
         camera.lookAt(scene.position);
         scene.add(camera);
-
+        
         buildTree();
-        scene.add(treeGroup);
+        for(i = 0; i < treeComponents.length; i++)
+          scene.add(treeComponents[i]);
         buildHouse();
         scene.add(houseGroup);
         buildCar();
         scene.add(carGroup);
+        buildSun();
       }
 
       function animateScene() {
-        treeGroup.rotation.y += 0.01;
-        carGroup.translate.x += 0.1;
+        for(i = 0; i < treeComponents.length; i++)
+          treeComponents[i].rotation.y += 0.1;
+        sunGroup.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.01); 
+        carGroup.position.x += 0.1;
         requestAnimationFrame(animateScene);
 
         renderScene();
@@ -70,10 +72,10 @@
 
       function buildTree() {
         var trunk = new THREE.Geometry();
-        trunk.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
-        trunk.vertices.push(new THREE.Vector3(1.0, 0, 0.0));
-        trunk.vertices.push(new THREE.Vector3(1.0, -1.0, 0.0));
-        trunk.vertices.push(new THREE.Vector3(0.0, -1.0, 0.0));
+        trunk.vertices.push(new THREE.Vector3(-0.5, 0, 0.0));
+        trunk.vertices.push(new THREE.Vector3(0.5, 0, 0.0));
+        trunk.vertices.push(new THREE.Vector3(0.5, -1.0, 0.0));
+        trunk.vertices.push(new THREE.Vector3(-0.5, -1.0, 0.0));
         trunk.faces.push(new THREE.Face3(0, 1, 2));
         trunk.faces.push(new THREE.Face3(0, 2, 3));
 
@@ -83,29 +85,29 @@
         });
 
         var trunkMesh = new THREE.Mesh(trunk, squareMaterial);
-        trunkMesh.position.set(-8.0, 0.0, -6.0);
-        treeGroup.add(trunkMesh);
+        trunkMesh.position.set(-8.0, 0.0, -4.0);
+        treeComponents.push(trunkMesh);
 
-        buildTreeLevel(0x11812D, 1.0, 0.0);
-        buildTreeLevel(0x129232, 2.0, 0.001);
-        buildTreeLevel(0x17A43A, 3.0, 0.002);
+        buildTreeLevel(0x11812D, 1.0);
+        buildTreeLevel(0x129232, 2.0);
+        buildTreeLevel(0x17A43A, 3.0);
       }
 
-      function buildTreeLevel(levelColor, yAxisVal, zPointVal){
+      function buildTreeLevel(levelColor, yAxisVal){
         var treeLevel = new THREE.Geometry();
-        treeLevel.vertices.push(new THREE.Vector3(0.0, 0.75, zPointVal));
-        treeLevel.vertices.push(new THREE.Vector3(-1.3, -1.0, zPointVal));
-        treeLevel.vertices.push(new THREE.Vector3(1.3, -1.0, zPointVal));
+        treeLevel.vertices.push(new THREE.Vector3(0.0, 0.75, 0.0));
+        treeLevel.vertices.push(new THREE.Vector3(-1.3, -1.0, 0.0));
+        treeLevel.vertices.push(new THREE.Vector3(1.3, -1.0, 0.0));
         treeLevel.faces.push(new THREE.Face3(0, 1, 2));
         
         var triangleMaterial = new THREE.MeshBasicMaterial({
             color:levelColor,
             side:THREE.DoubleSide 
         });
-
+        
         treeLevelMesh = new THREE.Mesh(treeLevel, triangleMaterial);
-        treeLevelMesh.position.set(-7.5, yAxisVal, -6.0);
-        treeGroup.add(treeLevelMesh);
+        treeLevelMesh.position.set(-8.0, yAxisVal, -4.0);
+        treeComponents.push(treeLevelMesh);
       }
 
       function buildHouse(){
@@ -186,30 +188,41 @@
         car.faces.push(new THREE.Face3(0, 2, 3));
 
         var squareMaterial = new THREE.MeshBasicMaterial({
-          color: 0xE82714,
+          color: 0x196DED,
           side:THREE.DoubleSide
         });
 
         var carMesh = new THREE.Mesh(car, squareMaterial);
-        carMesh.position.set(-7.0, 0.0, 4.0);
+        carMesh.position.set(-14.0, 0.0, 4.0);
         carGroup.add(carMesh);
         
-        buildWheel(-7.0);
-        buildWheel(-2.0);
+        buildWheel(-14.0);
+        buildWheel(-9.0);
       }
 
       function buildWheel(xAxisValue){
         var wheel = new THREE.CircleGeometry(0.6, 32);
         var circleMaterial = new THREE.MeshBasicMaterial({
-          color: 0x7E6361,
+          color: 0x000000,
           side:THREE.DoubleSide
         });
 
         var wheelMesh = new THREE.Mesh(wheel, circleMaterial);
         wheelMesh.position.set(xAxisValue, -2.0, 4.001);
         carGroup.add(wheelMesh);
+      }
 
-        carGroup.add(wheel);
+      function buildSun(){
+        var sun = new THREE.CircleGeometry(0.7, 32);
+        var circleMaterial = new THREE.MeshBasicMaterial({
+          color: 0xEDED19,
+          side:THREE.DoubleSide
+        });
+
+        sunMesh = new THREE.Mesh(sun, circleMaterial);
+        sunMesh.position.set(-8.0, 6.0, 4.001);
+        sunGroup.add(sunMesh);
+        scene.add(sunGroup);
       }
 
     </script>
