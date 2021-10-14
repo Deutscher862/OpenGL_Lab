@@ -1,230 +1,240 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Shapes animation exercise</title>
-    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1"/>
-    <style type="text/css">
-      body {
-        margin: 0;
-        background-image: linear-gradient(to top, #8a2387, #e94057, #f27121); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-        overflow: hidden;
-      }
-    </style>
+    <head>
+        <title>Shapes animation exercise</title>
+        <meta
+            http-equiv="content-type"
+            content="text/html; charset=ISO-8859-1"
+        />
+        <meta
+            name="viewport"
+            content="width=device-width, height=device-height, initial-scale=1"
+        />
+        <style type="text/css">
+            body {
+                margin: 0;
+                background-image: linear-gradient(
+                    to top,
+                    #8a2387,
+                    #e94057,
+                    #f27121
+                );
+                overflow: hidden;
+            }
+        </style>
 
-    <script src="three.js"></script>
-    <script src="Detector.js"></script>
-  </head>
-  <body>
-    <div id="WebGLCanvas"></div>
-    <script>
-      var scene;
-      var camera;
-      var treeComponents = [];
-      var houseGroup = new THREE.Group();
-      var carGroup = new THREE.Group();
-      var sunGroup = new THREE.Group();
-      
-      initializeScene();
-      animateScene();
-      renderer.render(scene, camera);
+        <script src="three.js"></script>
+        <script src="Detector.js"></script>
+    </head>
+    <body>
+        <div id="WebGLCanvas"></div>
+        <script>
+            var scene;
+            var camera;
+            var treeComponents = [];
+            var houseGroup = new THREE.Group();
+            var carGroup = new THREE.Group();
+            var sunGroup = new THREE.Group();
 
-      function initializeScene() {
-        if (Detector.webgl) {
-          renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true});
-        } else {
-          renderer = new THREE.CanvasRenderer({ alpha: true });
-        }
-        canvasWidth = window.innerWidth;
-        canvasHeight = window.innerHeight;
-        renderer.setSize(canvasWidth, canvasHeight);
-        document.getElementById("WebGLCanvas").appendChild(renderer.domElement);
-        
-        scene = new THREE.Scene();
+            initializeScene();
+            animateScene();
+            renderer.render(scene, camera);
 
-        camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 1, 100);
-        camera.position.set(0, 5, 20);
-        camera.lookAt(scene.position);
-        scene.add(camera);
-        
-        buildTree();
-        for(i = 0; i < treeComponents.length; i++)
-          scene.add(treeComponents[i]);
-        buildHouse();
-        scene.add(houseGroup);
-        buildCar();
-        scene.add(carGroup);
-        buildSun();
-      }
+            function initializeScene() {
+                if (Detector.webgl) {
+                    renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+                } else {
+                    renderer = new THREE.CanvasRenderer({ alpha: true });
+                }
+                canvasWidth = window.innerWidth;
+                canvasHeight = window.innerHeight;
+                renderer.setSize(canvasWidth, canvasHeight);
+                document.getElementById("WebGLCanvas").appendChild(renderer.domElement);
 
-      function animateScene() {
-        for(i = 0; i < treeComponents.length; i++)
-          treeComponents[i].rotation.y += 0.1;
-        sunGroup.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.01); 
-        carGroup.position.x += 0.1;
-        requestAnimationFrame(animateScene);
+                scene = new THREE.Scene();
 
-        renderScene();
-      }
-      function renderScene() {
-        renderer.render(scene, camera);
-      }
+                camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 1, 100);
+                camera.position.set(0, 5, 20);
+                camera.lookAt(scene.position);
+                scene.add(camera);
 
-      function buildTree() {
-        var trunk = new THREE.Geometry();
-        trunk.vertices.push(new THREE.Vector3(-0.5, 0, 0.0));
-        trunk.vertices.push(new THREE.Vector3(0.5, 0, 0.0));
-        trunk.vertices.push(new THREE.Vector3(0.5, -1.0, 0.0));
-        trunk.vertices.push(new THREE.Vector3(-0.5, -1.0, 0.0));
-        trunk.faces.push(new THREE.Face3(0, 1, 2));
-        trunk.faces.push(new THREE.Face3(0, 2, 3));
+                buildTree();
+                for (i = 0; i < treeComponents.length; i++)
+                    scene.add(treeComponents[i]);
+                buildHouse();
+                scene.add(houseGroup);
+                buildCar();
+                scene.add(carGroup);
+                buildSun();
+            }
 
-        var squareMaterial = new THREE.MeshBasicMaterial({
-          color: 0x9C6F31,
-          side:THREE.DoubleSide
-        });
+            function animateScene() {
+                for (i = 0; i < treeComponents.length; i++)
+                    treeComponents[i].rotation.y += 0.1;
+                sunGroup.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.01);
+                carGroup.position.x += 0.1;
+                requestAnimationFrame(animateScene);
 
-        var trunkMesh = new THREE.Mesh(trunk, squareMaterial);
-        trunkMesh.position.set(-8.0, 0.0, -4.0);
-        treeComponents.push(trunkMesh);
+                renderScene();
+            }
+            function renderScene() {
+                renderer.render(scene, camera);
+            }
 
-        buildTreeLevel(0x11812D, 1.0);
-        buildTreeLevel(0x129232, 2.0);
-        buildTreeLevel(0x17A43A, 3.0);
-      }
+            function buildTree() {
+                var trunk = new THREE.Geometry();
+                trunk.vertices.push(new THREE.Vector3(-0.5, 0, 0.0));
+                trunk.vertices.push(new THREE.Vector3(0.5, 0, 0.0));
+                trunk.vertices.push(new THREE.Vector3(0.5, -1.0, 0.0));
+                trunk.vertices.push(new THREE.Vector3(-0.5, -1.0, 0.0));
+                trunk.faces.push(new THREE.Face3(0, 1, 2));
+                trunk.faces.push(new THREE.Face3(0, 2, 3));
 
-      function buildTreeLevel(levelColor, yAxisVal){
-        var treeLevel = new THREE.Geometry();
-        treeLevel.vertices.push(new THREE.Vector3(0.0, 0.75, 0.0));
-        treeLevel.vertices.push(new THREE.Vector3(-1.3, -1.0, 0.0));
-        treeLevel.vertices.push(new THREE.Vector3(1.3, -1.0, 0.0));
-        treeLevel.faces.push(new THREE.Face3(0, 1, 2));
-        
-        var triangleMaterial = new THREE.MeshBasicMaterial({
-            color:levelColor,
-            side:THREE.DoubleSide 
-        });
-        
-        treeLevelMesh = new THREE.Mesh(treeLevel, triangleMaterial);
-        treeLevelMesh.position.set(-8.0, yAxisVal, -4.0);
-        treeComponents.push(treeLevelMesh);
-      }
+                var squareMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x9c6f31,
+                    side: THREE.DoubleSide,
+                });
 
-      function buildHouse(){
-        var house = new THREE.Geometry();
-        house.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
-        house.vertices.push(new THREE.Vector3(10.0, 0, 0.0));
-        house.vertices.push(new THREE.Vector3(10.0, -5.0, 0.0));
-        house.vertices.push(new THREE.Vector3(0.0, -5.0, 0.0));
-        house.faces.push(new THREE.Face3(0, 1, 2));
-        house.faces.push(new THREE.Face3(0, 2, 3));
+                var trunkMesh = new THREE.Mesh(trunk, squareMaterial);
+                trunkMesh.position.set(-8.0, 0.0, -4.0);
+                treeComponents.push(trunkMesh);
 
-        var squareMaterial = new THREE.MeshBasicMaterial({
-          color: 0xBC9F28,
-          side:THREE.DoubleSide
-        });
+                buildTreeLevel(0x11812d, 1.0);
+                buildTreeLevel(0x129232, 2.0);
+                buildTreeLevel(0x17a43a, 3.0);
+            }
 
-        var houseMesh = new THREE.Mesh(house, squareMaterial);
-        houseMesh.position.set(0.0, 0.0, -4.0);
-        houseGroup.add(houseMesh);
+            function buildTreeLevel(levelColor, yAxisVal) {
+                var treeLevel = new THREE.Geometry();
+                treeLevel.vertices.push(new THREE.Vector3(0.0, 0.75, 0.0));
+                treeLevel.vertices.push(new THREE.Vector3(-1.3, -1.0, 0.0));
+                treeLevel.vertices.push(new THREE.Vector3(1.3, -1.0, 0.0));
+                treeLevel.faces.push(new THREE.Face3(0, 1, 2));
 
-        var roof = new THREE.Geometry();
-        roof.vertices.push(new THREE.Vector3(5.0, 5.0, 0.0));
-        roof.vertices.push(new THREE.Vector3(0.0, 0.0, 0.0));
-        roof.vertices.push(new THREE.Vector3(10.0, 0.0, 0.0));
-        roof.faces.push(new THREE.Face3(0, 1, 2));
-        
-        var triangleMaterial = new THREE.MeshBasicMaterial({
-            color:0xC42727,
-            side:THREE.DoubleSide 
-        });
+                var triangleMaterial = new THREE.MeshBasicMaterial({
+                    color: levelColor,
+                    side: THREE.DoubleSide,
+                });
 
-        roofMesh = new THREE.Mesh(roof, triangleMaterial);
-        roofMesh.position.set(0.0, 0.0, -4.0);
-        houseGroup.add(roofMesh);
+                treeLevelMesh = new THREE.Mesh(treeLevel, triangleMaterial);
+                treeLevelMesh.position.set(-8.0, yAxisVal, -4.0);
+                treeComponents.push(treeLevelMesh);
+            }
 
-        var doors = new THREE.Geometry();
-        doors.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
-        doors.vertices.push(new THREE.Vector3(1.5, 0, 0.0));
-        doors.vertices.push(new THREE.Vector3(1.5, -3.0, 0.0));
-        doors.vertices.push(new THREE.Vector3(0.0, -3.0, 0.0));
-        doors.faces.push(new THREE.Face3(0, 1, 2));
-        doors.faces.push(new THREE.Face3(0, 2, 3));
+            function buildHouse() {
+                var house = new THREE.Geometry();
+                house.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
+                house.vertices.push(new THREE.Vector3(10.0, 0, 0.0));
+                house.vertices.push(new THREE.Vector3(10.0, -5.0, 0.0));
+                house.vertices.push(new THREE.Vector3(0.0, -5.0, 0.0));
+                house.faces.push(new THREE.Face3(0, 1, 2));
+                house.faces.push(new THREE.Face3(0, 2, 3));
 
-        var squareMaterial = new THREE.MeshBasicMaterial({
-          color: 0x8F6017,
-          side:THREE.DoubleSide
-        });
+                var squareMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xbc9f28,
+                    side: THREE.DoubleSide,
+                });
 
-        var doorsMesh = new THREE.Mesh(doors, squareMaterial);
-        doorsMesh.position.set(2.0, -2.0, -3.999);
-        houseGroup.add(doorsMesh);
+                var houseMesh = new THREE.Mesh(house, squareMaterial);
+                houseMesh.position.set(0.0, 0.0, -4.0);
+                houseGroup.add(houseMesh);
 
-        var window = new THREE.Geometry();
-        window.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
-        window.vertices.push(new THREE.Vector3(2.0, 0, 0.0));
-        window.vertices.push(new THREE.Vector3(2.0, -2.0, 0.0));
-        window.vertices.push(new THREE.Vector3(0.0, -2.0, 0.0));
-        window.faces.push(new THREE.Face3(0, 1, 2));
-        window.faces.push(new THREE.Face3(0, 2, 3));
+                var roof = new THREE.Geometry();
+                roof.vertices.push(new THREE.Vector3(5.0, 5.0, 0.0));
+                roof.vertices.push(new THREE.Vector3(0.0, 0.0, 0.0));
+                roof.vertices.push(new THREE.Vector3(10.0, 0.0, 0.0));
+                roof.faces.push(new THREE.Face3(0, 1, 2));
 
-        var squareMaterial = new THREE.MeshBasicMaterial({
-          color: 0x1A93C4,
-          side:THREE.DoubleSide
-        });
+                var triangleMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xc42727,
+                    side: THREE.DoubleSide,
+                });
 
-        var windowMesh = new THREE.Mesh(window, squareMaterial);
-        windowMesh.position.set(6.0, -1.5, -3.999);
-        houseGroup.add(windowMesh);
-      }
+                roofMesh = new THREE.Mesh(roof, triangleMaterial);
+                roofMesh.position.set(0.0, 0.0, -4.0);
+                houseGroup.add(roofMesh);
 
-      function buildCar(){
-        var car = new THREE.Geometry();
-        car.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
-        car.vertices.push(new THREE.Vector3(5.0, 0, 0.0));
-        car.vertices.push(new THREE.Vector3(5.0, -2.0, 0.0));
-        car.vertices.push(new THREE.Vector3(0.0, -2.0, 0.0));
-        car.faces.push(new THREE.Face3(0, 1, 2));
-        car.faces.push(new THREE.Face3(0, 2, 3));
+                var doors = new THREE.Geometry();
+                doors.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
+                doors.vertices.push(new THREE.Vector3(1.5, 0, 0.0));
+                doors.vertices.push(new THREE.Vector3(1.5, -3.0, 0.0));
+                doors.vertices.push(new THREE.Vector3(0.0, -3.0, 0.0));
+                doors.faces.push(new THREE.Face3(0, 1, 2));
+                doors.faces.push(new THREE.Face3(0, 2, 3));
 
-        var squareMaterial = new THREE.MeshBasicMaterial({
-          color: 0x196DED,
-          side:THREE.DoubleSide
-        });
+                var squareMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x8f6017,
+                    side: THREE.DoubleSide,
+                });
 
-        var carMesh = new THREE.Mesh(car, squareMaterial);
-        carMesh.position.set(-14.0, 0.0, 4.0);
-        carGroup.add(carMesh);
-        
-        buildWheel(-14.0);
-        buildWheel(-9.0);
-      }
+                var doorsMesh = new THREE.Mesh(doors, squareMaterial);
+                doorsMesh.position.set(2.0, -2.0, -3.999);
+                houseGroup.add(doorsMesh);
 
-      function buildWheel(xAxisValue){
-        var wheel = new THREE.CircleGeometry(0.6, 32);
-        var circleMaterial = new THREE.MeshBasicMaterial({
-          color: 0x000000,
-          side:THREE.DoubleSide
-        });
+                var window = new THREE.Geometry();
+                window.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
+                window.vertices.push(new THREE.Vector3(2.0, 0, 0.0));
+                window.vertices.push(new THREE.Vector3(2.0, -2.0, 0.0));
+                window.vertices.push(new THREE.Vector3(0.0, -2.0, 0.0));
+                window.faces.push(new THREE.Face3(0, 1, 2));
+                window.faces.push(new THREE.Face3(0, 2, 3));
 
-        var wheelMesh = new THREE.Mesh(wheel, circleMaterial);
-        wheelMesh.position.set(xAxisValue, -2.0, 4.001);
-        carGroup.add(wheelMesh);
-      }
+                var squareMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x1a93c4,
+                    side: THREE.DoubleSide,
+                });
 
-      function buildSun(){
-        var sun = new THREE.CircleGeometry(0.7, 32);
-        var circleMaterial = new THREE.MeshBasicMaterial({
-          color: 0xEDED19,
-          side:THREE.DoubleSide
-        });
+                var windowMesh = new THREE.Mesh(window, squareMaterial);
+                windowMesh.position.set(6.0, -1.5, -3.999);
+                houseGroup.add(windowMesh);
+            }
 
-        sunMesh = new THREE.Mesh(sun, circleMaterial);
-        sunMesh.position.set(-8.0, 6.0, 4.001);
-        sunGroup.add(sunMesh);
-        scene.add(sunGroup);
-      }
+            function buildCar() {
+                var car = new THREE.Geometry();
+                car.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
+                car.vertices.push(new THREE.Vector3(5.0, 0, 0.0));
+                car.vertices.push(new THREE.Vector3(5.0, -2.0, 0.0));
+                car.vertices.push(new THREE.Vector3(0.0, -2.0, 0.0));
+                car.faces.push(new THREE.Face3(0, 1, 2));
+                car.faces.push(new THREE.Face3(0, 2, 3));
 
-    </script>
-  </body>
+                var squareMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x196ded,
+                    side: THREE.DoubleSide,
+                });
+
+                var carMesh = new THREE.Mesh(car, squareMaterial);
+                carMesh.position.set(-14.0, 0.0, 4.0);
+                carGroup.add(carMesh);
+
+                buildWheel(-14.0);
+                buildWheel(-9.0);
+            }
+
+            function buildWheel(xAxisValue) {
+                var wheel = new THREE.CircleGeometry(0.6, 32);
+                var circleMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x000000,
+                    side: THREE.DoubleSide,
+                });
+
+                var wheelMesh = new THREE.Mesh(wheel, circleMaterial);
+                wheelMesh.position.set(xAxisValue, -2.0, 4.001);
+                carGroup.add(wheelMesh);
+            }
+
+            function buildSun() {
+                var sun = new THREE.CircleGeometry(0.7, 32);
+                var circleMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xeded19,
+                    side: THREE.DoubleSide,
+                });
+
+                sunMesh = new THREE.Mesh(sun, circleMaterial);
+                sunMesh.position.set(-8.0, 6.0, 4.001);
+                sunGroup.add(sunMesh);
+                scene.add(sunGroup);
+            }
+        </script>
+    </body>
 </html>
