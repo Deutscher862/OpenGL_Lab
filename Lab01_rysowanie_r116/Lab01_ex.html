@@ -59,12 +59,11 @@
 
       function animateScene() {
         treeGroup.rotation.y += 0.01;
-        car.translate.x += 0.1;
+        carGroup.translate.x += 0.1;
         requestAnimationFrame(animateScene);
 
         renderScene();
       }
-      
       function renderScene() {
         renderer.render(scene, camera);
       }
@@ -178,7 +177,7 @@
       }
 
       function buildCar(){
-        car = new THREE.Geometry();
+        var car = new THREE.Geometry();
         car.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
         car.vertices.push(new THREE.Vector3(5.0, 0, 0.0));
         car.vertices.push(new THREE.Vector3(5.0, -2.0, 0.0));
