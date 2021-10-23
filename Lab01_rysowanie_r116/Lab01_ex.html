@@ -32,9 +32,14 @@
             var scene;
             var camera;
             var treeComponents = [];
+            var smokeComponents = [];
             var houseGroup = new THREE.Group();
             var carGroup = new THREE.Group();
             var sunGroup = new THREE.Group();
+            var smokeGroup = new THREE.Group();
+
+            var moved = [0, 25, 50];
+            var goingUp = [true, true, true];
 
             initializeScene();
             animateScene();
@@ -58,11 +63,15 @@
                 camera.lookAt(scene.position);
                 scene.add(camera);
 
-                buildTree();
+                buildTree(0.5, 0.0);
+                buildTree(0.0, 0.5);
                 for (i = 0; i < treeComponents.length; i++)
                     scene.add(treeComponents[i]);
                 buildHouse();
                 scene.add(houseGroup);
+                buildSmoke();
+                for (i = 0; i < smokeComponents.length; i++)
+                    scene.add(smokeComponents[i]);
                 buildCar();
                 scene.add(carGroup);
                 buildSun();
@@ -71,7 +80,27 @@
             function animateScene() {
                 for (i = 0; i < treeComponents.length; i++)
                     treeComponents[i].rotation.y += 0.1;
+
+                for (i = 0; i < smokeComponents.length; i++){
+                    if(goingUp[i]){
+                        smokeComponents[i].scale.x += 0.005;
+                        smokeComponents[i].scale.y += 0.005;
+                    } else {
+                        smokeComponents[i].scale.x -= 0.005;
+                        smokeComponents[i].scale.y -= 0.005;
+                    }
+                    moved[i]++;
+                    if(moved[i] == 75){
+                        moved[i] = 0;
+                        if(goingUp[i])
+                            goingUp[i] = false;
+                        else 
+                            goingUp[i] = true;
+                    }
+                }
+                
                 sunGroup.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.01);
+
                 carGroup.position.x += 0.1;
                 requestAnimationFrame(animateScene);
 
@@ -81,12 +110,12 @@
                 renderer.render(scene, camera);
             }
 
-            function buildTree() {
+            function buildTree(xPointValue, zPointValue) {
                 var trunk = new THREE.Geometry();
-                trunk.vertices.push(new THREE.Vector3(-0.5, 0, 0.0));
-                trunk.vertices.push(new THREE.Vector3(0.5, 0, 0.0));
-                trunk.vertices.push(new THREE.Vector3(0.5, -1.0, 0.0));
-                trunk.vertices.push(new THREE.Vector3(-0.5, -1.0, 0.0));
+                trunk.vertices.push(new THREE.Vector3(-xPointValue, 0, -zPointValue));
+                trunk.vertices.push(new THREE.Vector3(xPointValue, 0, zPointValue));
+                trunk.vertices.push(new THREE.Vector3(xPointValue, -1.0, zPointValue));
+                trunk.vertices.push(new THREE.Vector3(-xPointValue, -1.0, -zPointValue));
                 trunk.faces.push(new THREE.Face3(0, 1, 2));
                 trunk.faces.push(new THREE.Face3(0, 2, 3));
 
@@ -98,17 +127,23 @@
                 var trunkMesh = new THREE.Mesh(trunk, squareMaterial);
                 trunkMesh.position.set(-8.0, 0.0, -4.0);
                 treeComponents.push(trunkMesh);
+                if(xPointValue != 0){
+                    buildTreeLevel(0x137312, 1.0, 1.3, 0.0);
+                    buildTreeLevel(0x157C14, 2.0, 1.3, 0.0);
+                    buildTreeLevel(0x188917, 3.0, 1.3, 0.0);
+                } else {
+                    buildTreeLevel(0x137312, 1.0, 0.0, 1.3);
+                    buildTreeLevel(0x157C14, 2.0, 0.0, 1.3);
+                    buildTreeLevel(0x188917, 3.0, 0.0, 1.3);
+                }
 
-                buildTreeLevel(0x11812d, 1.0);
-                buildTreeLevel(0x129232, 2.0);
-                buildTreeLevel(0x17a43a, 3.0);
             }
 
-            function buildTreeLevel(levelColor, yAxisVal) {
+            function buildTreeLevel(levelColor, yAxisVal, xPointValue, zPointValue) {
                 var treeLevel = new THREE.Geometry();
                 treeLevel.vertices.push(new THREE.Vector3(0.0, 0.75, 0.0));
-                treeLevel.vertices.push(new THREE.Vector3(-1.3, -1.0, 0.0));
-                treeLevel.vertices.push(new THREE.Vector3(1.3, -1.0, 0.0));
+                treeLevel.vertices.push(new THREE.Vector3(-xPointValue, -1.0, -zPointValue));
+                treeLevel.vertices.push(new THREE.Vector3(xPointValue, -1.0, zPointValue));
                 treeLevel.faces.push(new THREE.Face3(0, 1, 2));
 
                 var triangleMaterial = new THREE.MeshBasicMaterial({
@@ -187,6 +222,23 @@
                 var windowMesh = new THREE.Mesh(window, squareMaterial);
                 windowMesh.position.set(6.0, -1.5, -3.999);
                 houseGroup.add(windowMesh);
+
+                var chimney = new THREE.Geometry();
+                chimney.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
+                chimney.vertices.push(new THREE.Vector3(1.0, 0, 0.0));
+                chimney.vertices.push(new THREE.Vector3(1.0, -2.0, 0.0));
+                chimney.vertices.push(new THREE.Vector3(0.0, -2.0, 0.0));
+                chimney.faces.push(new THREE.Face3(0, 1, 2));
+                chimney.faces.push(new THREE.Face3(0, 2, 3));
+
+                var squareMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xD87C2F,
+                    side: THREE.DoubleSide,
+                });
+
+                var chimneyMesh = new THREE.Mesh(chimney, squareMaterial);
+                chimneyMesh.position.set(6.5, 4.0, -3.999);
+                houseGroup.add(chimneyMesh);
             }
 
             function buildCar() {
@@ -234,6 +286,24 @@
                 sunMesh.position.set(-8.0, 6.0, 4.001);
                 sunGroup.add(sunMesh);
                 scene.add(sunGroup);
+            }
+
+            function buildSmoke() {
+                buildSmokeComponent(0.3, 4.75, 4.75);
+                buildSmokeComponent(0.4, 5.1, 5.1);
+                buildSmokeComponent(0.5, 5.5, 5.5);
+            }
+
+            function buildSmokeComponent(size, xAxisValue, yAxisValue){
+                var smoke = new THREE.CircleGeometry(size, 32);
+                var circleMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x98897D,
+                    side: THREE.DoubleSide,
+                });
+
+                smokeMesh = new THREE.Mesh(smoke, circleMaterial);
+                smokeMesh.position.set(xAxisValue, yAxisValue, 4.001);
+                smokeComponents.push(smokeMesh);
             }
         </script>
     </body>
