@@ -14,6 +14,7 @@
             /* set margin to 0 and overflow to hidden, to go fullscreen */
             margin: 0;
             overflow: hidden;
+            background-image: "night_sky.jpg";
         }
     </style>
 </head>
@@ -37,6 +38,12 @@
         // create a camera, which defines where we're looking at.
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 		
+        const loader = new THREE.TextureLoader()
+            .load('https://images.pexels.com/photos/1694000/pexels-photo-1694000.jpeg' , function(texture)
+            {
+             scene.background = texture;  
+            });
+
         // create a render and set the size
         var renderer = new THREE.WebGLRenderer();
 
@@ -49,7 +56,7 @@
 		ctr = new THREE.OrbitControls( camera, renderer.domElement);
 
         // create the ground plane
-        var planeGeometry = new THREE.PlaneGeometry(150, 150, 150, 500);
+        var planeGeometry = new THREE.PlaneGeometry(130, 130, 150, 500);
         var planeMaterial = new THREE.MeshPhongMaterial({color: 0xffffff, side:THREE.DoubleSide});
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
@@ -127,20 +134,20 @@
 		spotLight.shadow.mapSize.height = 1000;
 		
         scene.add(spotLight);
+        
+        createLampSpotLight(-30, -45);
+        createLampSpotLight(15, -45);
+        createLampSpotLight(60, -45);
 
+        createLampSpotLight(-30, 45);
+        createLampSpotLight(15, 45);
+        createLampSpotLight(60, 45);
 
-        // add spotlight for the shadows
-        var spotLight2 = new THREE.SpotLight(0x7A83D5);
-        spotLight2.position.set(-25, 60, -25);
-        spotLight2.castShadow = true;
-		  
-		spotLight2.angle = 0.2;
-		spotLight2.penumbra = .8;
-		spotLight2.target = sphere2;
-		var helper = new THREE.CameraHelper( spotLight2.shadow.camera );
-        scene.add( helper );
-		spotLight2.shadow.camera.near = 0.1;
-        scene.add(spotLight2);
+        createRoadLane(-40);
+        createRoadLane(-15);
+        createRoadLane(10);
+        createRoadLane(35);
+        createRoadLane(60);
 
         // add the output of the renderer to the html element
         $("#WebGL-output").append(renderer.domElement);
@@ -201,6 +208,48 @@
             return stats;
         }
   
+        function createLampSpotLight(xValue, zValue){
+            // add spotlight
+            var spotLight = new THREE.SpotLight(0xFCFFBF);
+            spotLight.position.set(xValue, 60, zValue);
+            spotLight.castShadow = true;
+            
+            spotLight.angle = 0.3;
+            spotLight.penumbra = .8;
+
+            //add spotlight target
+            const targetObject = new THREE.Object3D();
+            targetObject.position.set(xValue, 0, zValue);
+            scene.add(targetObject);
+            spotLight.target = targetObject;
+
+            spotLight.shadow.camera.near = 0.1;
+            scene.add(spotLight);
+            
+            // add light cone
+            const geometry = new THREE.ConeGeometry( 17, 60, 32 );
+            const material = new THREE.MeshBasicMaterial( {
+                color: 0xFCFFBF,
+                transparent: true,
+                opacity: 0.15
+            });
+            const cone = new THREE.Mesh( geometry, material );
+            cone.position.set(xValue, 30, zValue);
+            scene.add( cone );
+        }
+
+        function createRoadLane(xValue){
+            const geometry = new THREE.PlaneGeometry( 12, 3 );
+            const material = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+            const plane = new THREE.Mesh( geometry, material );
+
+            plane.rotation.x = -0.5 * Math.PI;
+
+            plane.position.set(xValue, 0.1, 0);
+
+            plane.receiveShadow = true;
+            scene.add( plane );
+        }
 
 
 </script>
