@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>Lab 02.01 - Ambient and SpotLight</title>
+    <title>Lab 02 - Adam Niemiec</title>
     <script type="text/javascript" src="three.js"></script>
     <script type="text/javascript" src="jquery-1.9.0.js"></script>
     <script type="text/javascript" src="stats.js"></script>
@@ -11,10 +11,8 @@
 	<script type="text/javascript" src="OrbitControls.js"></script>
     <style>
         body {
-            /* set margin to 0 and overflow to hidden, to go fullscreen */
             margin: 0;
             overflow: hidden;
-            background-image: "night_sky.jpg";
         }
     </style>
 </head>
@@ -22,23 +20,18 @@
 
 <div id="Stats-output">
 </div>
-<!-- Div which will hold the Output -->
 <div id="WebGL-output">
 </div>
 
-<!-- Javascript code that runs our Three.js examples -->
 <script type="text/javascript">
 
-    
         var stats = initStats();
 
-        // create a scene, that will hold all our elements such as objects, cameras and lights.
         var scene = new THREE.Scene();
 
-        // create a camera, which defines where we're looking at.
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 		
-        const loader = new THREE.TextureLoader()
+        var loader = new THREE.TextureLoader()
             .load('https://images.pexels.com/photos/1694000/pexels-photo-1694000.jpeg' , function(texture)
             {
              scene.background = texture;  
@@ -47,11 +40,11 @@
         // create a render and set the size
         var renderer = new THREE.WebGLRenderer();
 
-        renderer.setClearColor(new THREE.Color(0x000000));  //background color and opacity
+        renderer.setClearColor(new THREE.Color(0x000000));
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;   // false is default
-		renderer.autoClear = true;          // default
-		renderer.autoClearColor = true;     // default
+        renderer.shadowMap.enabled = true;   
+		renderer.autoClear = true;         
+		renderer.autoClearColor = true;     
 		
 		ctr = new THREE.OrbitControls( camera, renderer.domElement);
 
